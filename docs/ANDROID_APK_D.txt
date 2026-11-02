@@ -1,0 +1,99 @@
+﻿MoonShare 1.0.20 — 安装与使用说明
+=================================
+
+一、Android 分享端（已签名 APK）
+--------------------------------
+APK:      D:\MoonShare\apk\MoonShare-1.0.20.apk
+包名:     com.moonshare
+版本:     1.0.20 (versionCode 21)
+minSdk:   26 (Android 8.0)
+targetSdk:35 (Android 15)
+签名:     已使用 D:\MoonShare\keystore\moonshare-release.jks 签名（v2 + v3）
+SHA-256:  E5034722399AF9E31BDB510FB924AB2D5824823B25ACFEB081069842E7B5EF36
+
+安装方式（任选其一）：
+1) USB 调试已开启时：
+   D:\MoonShare\toolchain\android-sdk\platform-tools\adb.exe install -r "D:\MoonShare\apk\MoonShare-1.0.20.apk"
+2) 把 APK 传到手机（微信/网盘/数据线均可），在文件管理器点击安装；
+   手机需要允许“安装未知应用”。
+3) 如果之前装过 debug 版（同一包名但签名不同），先卸载旧版：
+   D:\MoonShare\toolchain\android-sdk\platform-tools\adb.exe uninstall com.moonshare
+
+首次使用：
+- 打开 MoonShare，允许通知权限。
+- 允许“麦克风/录音”权限，用于采集手机内播放的声音（Android 10+ 的播放捕获）。
+  未授权时视频仍可用，但没有声音；通话/受保护音频不会被捕获。
+- 点“开始共享屏幕”，在系统录屏弹窗中允许。
+- 手机界面会显示 6 位配对码和 IP 地址。
+- 手机与 PC 必须在同一局域网（或同一 VPN 互通）。
+- Android 14/15 每次开始共享都会重新弹出录屏授权，这是系统隐私限制。
+
+二、Windows 安装包（推荐）
+----------------------------
+安装包: D:\MoonShare\installer\MoonView-1.0.20-Setup.exe
+大小:   55.5 MB
+安装到: D:\MoonShare\pc\MoonView（可在安装向导中修改）
+说明:
+- 自带 .NET 7 WPF / ASP.NET Core 运行时，不需要另装 .NET SDK。
+- 如果系统缺少 Microsoft Edge WebView2 Runtime，安装包会自动调用官方 WebView2 引导程序（需要联网）。
+- 安装包未做商业代码签名，Windows 首次运行可能提示 SmartScreen，请选择“更多信息 → 仍要运行”。
+- 安装后开始菜单出现 MoonView；卸载使用“设置 → 应用 → MoonView”或安装目录 unins000.exe。
+三、Windows 查看端
+-------------------
+程序: D:\MoonShare\pc\MoonView\MoonView.exe
+目录: D:\MoonShare\pc\MoonView\
+
+运行依赖：
+- .NET 7 Desktop Runtime
+- ASP.NET Core Runtime 7.0
+  （安装 .NET 7 SDK 会同时包含以上两者）
+- Microsoft Edge WebView2 Runtime
+
+使用：
+- 打开 MoonView。
+- PC 会自动发现同一广播域内的 MoonShare；也可以手动输入手机地址。
+- 输入手机上的 6 位配对码，点“连接并观看”。
+- F11 全屏；观看端只能看，不能控制手机。
+- 首次连接 Windows 可能弹出防火墙提示，请允许“专用网络”。
+- 1.0.20 使用 GL 帧门控把编码限制在 30 fps，消除快速移动时的块状花屏；码率目标约 0.5 bit/像素/帧（1080p30 上限约 25 Mbps）。
+- 1.0.20 增加 48 kHz 双声道 PCM 音频：Android 播放捕获 → TCP 47804 → PC Web Audio。PC 画面右上角显示“音频 开 · xx/s”。
+- 1.0.10 起增加 TCP 47801 视频回退：模拟器或 UDP 被防火墙阻断时，PC 会在 3 秒后自动改走 TCP；真机正常时仍使用 UDP。
+  模拟器调试可用：
+    adb -s emulator-5554 forward tcp:47800 tcp:47800
+    adb -s emulator-5554 forward tcp:47801 tcp:47801
+    adb -s emulator-5554 forward tcp:47804 tcp:47804
+    MoonView.exe --host 127.0.0.1 --code <配对码>
+
+四、构建工具（按你的要求放在 D 盘）
+------------------------------------
+D:\MoonShare\toolchain\android-sdk       Android SDK 35 / build-tools 35.0.1
+D:\MoonShare\toolchain\gradle-8.9        Gradle 8.9
+D:\MoonShare\toolchain\gradle-home       Gradle 依赖缓存
+D:\MoonShare\toolchain\project-cache     Gradle 构建缓存
+D:\MoonShare\keystore\                   发布签名密钥及密码
+
+APK 构建命令（在本机已完成）：
+  JAVA_HOME="C:\Program Files\Java\jdk-21"
+  ANDROID_HOME="D:\MoonShare\toolchain\android-sdk"
+  GRADLE_USER_HOME="D:\MoonShare\toolchain\gradle-home"
+  gradle :app:assembleRelease
+  然后用 zipalign + apksigner 签名。
+
+五、安全提示
+------------
+- v1 协议没有加密，配对码只用于防误连。请不要在不可信 Wi-Fi/公网直接使用。
+- 跨地点请套 WireGuard / Tailscale 等 VPN。
+- 不要删除 D:\MoonShare\keystore\；以后发布更新必须使用同一签名密钥。
+
+六、文件校验
+------------
+见 D:\MoonShare\SHA256SUMS.txt
+
+
+
+
+
+
+
+
+

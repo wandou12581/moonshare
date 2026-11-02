@@ -1,0 +1,12 @@
+<resources>
+    <style name="Theme.MoonShare" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowBackground">@drawable/bg_app</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">#080B10</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:colorAccent">#6EE7D1</item>
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
+</resources>

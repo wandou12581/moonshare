@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>MoonView</AssemblyName>
+    <RootNamespace>MoonView</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\moonview.ico</ApplicationIcon>
+    <Version>1.0.20</Version>
+    <Authors>MoonShare</Authors>
+    <Product>MoonView</Product>
+    <FileVersion>1.0.20.0</FileVersion>
+    <AssemblyVersion>1.0.20.0</AssemblyVersion>
+    <WebView2Dir Condition="'$(WebView2Dir)' == ''">$(MSBuildThisFileDirectory)lib\webview2</WebView2Dir>
+    <UseLocalWebView2 Condition="Exists('$(WebView2Dir)\Microsoft.Web.WebView2.Wpf.dll')">true</UseLocalWebView2>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseLocalWebView2)' == 'true'">
+    <Reference Include="Microsoft.Web.WebView2.Wpf">
+      <HintPath>$(WebView2Dir)\Microsoft.Web.WebView2.Wpf.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Core">
+      <HintPath>$(WebView2Dir)\Microsoft.Web.WebView2.Core.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <None Include="$(WebView2Dir)\WebView2Loader.dll" Link="WebView2Loader.dll" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseLocalWebView2)' != 'true'">
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3179.45" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="web\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Assets\moonview.ico" />
+  </ItemGroup>
+
+</Project>
+
+

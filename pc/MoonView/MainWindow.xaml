@@ -1,0 +1,204 @@
+<Window x:Class="MoonView.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="MoonView — MoonShare"
+        Icon="Assets/moonview.ico"
+        Width="1240"
+        Height="780"
+        MinWidth="760"
+        MinHeight="480"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BgBrush}"
+        Foreground="{StaticResource TextBrush}"
+        FontFamily="Segoe UI"
+        PreviewKeyDown="Window_PreviewKeyDown">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="SidebarColumn" Width="320" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar -->
+        <Border x:Name="Sidebar"
+                Grid.Column="0"
+                Background="{StaticResource PanelBrush}"
+                BorderBrush="{StaticResource StrokeBrush}"
+                BorderThickness="0,0,1,0">
+            <ScrollViewer Background="Transparent" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="22,22,22,16">
+
+                    <!-- Brand -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="46" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Width="44" Height="44" HorizontalAlignment="Left">
+                            <Ellipse Fill="#102321" Stroke="#2DD4BF" StrokeThickness="1" />
+                            <Path Data="M25.5,9 C20.9,11.1 17.7,15.7 17.7,21.1 C17.7,26.5 20.9,31.1 25.5,33.2 C19.9,34.6 14.3,31.5 12.1,26.2 C9.9,20.9 11.6,14.7 16.2,11.3 C18.8,9.4 22.1,8.5 25.5,9 Z"
+                                  Fill="#6EE7D1" />
+                            <Ellipse Width="10" Height="10" Fill="#58A6FF" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,7,8" />
+                        </Grid>
+                        <StackPanel Grid.Column="1" Margin="10,2,0,0">
+                            <TextBlock Text="MoonShare" FontSize="21" FontWeight="SemiBold" />
+                            <TextBlock Text="READ-ONLY SCREEN VIEWER" FontSize="9" Foreground="{StaticResource FaintBrush}" Margin="0,3,0,0" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Status -->
+                    <Border Background="#0A1118" BorderBrush="#1B2938" BorderThickness="1" CornerRadius="10" Padding="12,9" Margin="0,16,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse x:Name="StatusDot" Width="7" Height="7" Fill="#4E6278" VerticalAlignment="Center" />
+                            <TextBlock x:Name="StatusText" Text="未连接" FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Discovery -->
+                    <Grid Margin="0,16,0,6">
+                        <TextBlock Text="自动发现" Style="{StaticResource SectionLabel}" VerticalAlignment="Center" />
+                        <Button x:Name="RefreshButton" Content="刷新" Style="{StaticResource GhostButton}" HorizontalAlignment="Right" Click="RefreshButton_Click" />
+                    </Grid>
+
+                    <Grid Height="80">
+                        <ListBox x:Name="DeviceList" SelectionChanged="DeviceList_SelectionChanged">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}" FontSize="12" FontWeight="SemiBold" />
+                                            <TextBlock Text="{Binding Endpoint}" FontSize="10" Foreground="{StaticResource FaintBrush}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="可用" FontSize="9" Foreground="#6EE7D1" VerticalAlignment="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <TextBlock x:Name="DiscoveryEmpty"
+                                   Text="正在搜索局域网内的 MoonShare…"
+                                   FontSize="11"
+                                   Foreground="{StaticResource FaintBrush}"
+                                   TextWrapping="Wrap"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Margin="14,0"
+                                   IsHitTestVisible="False" />
+                    </Grid>
+
+                    <!-- Manual connection -->
+                    <TextBlock Text="手动连接" Style="{StaticResource SectionLabel}" Margin="0,14,0,6" />
+                    <TextBlock Text="IP 地址或主机名（IPv4 / IPv6）" FontSize="10" Foreground="{StaticResource FaintBrush}" Margin="0,0,0,5" />
+                    <TextBox x:Name="AddressBox" Text="192.168.1.100" ToolTip="例如 192.168.1.23、fe80::1234%12 或 [2408::1]" />
+
+                    <Grid Margin="0,9,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="92" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                            <TextBlock Text="端口" FontSize="10" Foreground="{StaticResource FaintBrush}" Margin="0,0,0,5" />
+                            <TextBox x:Name="PortBox" Text="47800" MaxLength="5" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="配对码" FontSize="10" Foreground="{StaticResource FaintBrush}" Margin="0,0,0,5" />
+                            <TextBox x:Name="CodeBox" MaxLength="6" FontSize="16" FontFamily="Cascadia Mono, Consolas" PreviewTextInput="CodeBox_PreviewTextInput" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Button x:Name="ConnectButton" Content="连接并观看" Style="{StaticResource PrimaryButton}" Margin="0,14,0,0" Click="ConnectButton_Click" />
+
+                    <TextBlock x:Name="ErrorText"
+                               Visibility="Collapsed"
+                               Foreground="{StaticResource DangerBrush}"
+                               FontSize="11"
+                               TextWrapping="Wrap"
+                               Margin="2,9,0,0" />
+
+                    <!-- Stats -->
+                    <Border Background="#0A1118" BorderBrush="#1B2938" BorderThickness="1" CornerRadius="11" Padding="13,9" Margin="0,14,0,0">
+                        <StackPanel>
+                            <Grid>
+                                <TextBlock Text="会话信息" Style="{StaticResource SectionLabel}" />
+                                <TextBlock x:Name="StatsStateText" Text="空闲" FontSize="10" Foreground="{StaticResource FaintBrush}" HorizontalAlignment="Right" />
+                            </Grid>
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="分辨率" FontSize="9" Foreground="{StaticResource FaintBrush}" />
+                                    <TextBlock x:Name="ResolutionText" Text="—" FontSize="12" FontFamily="Cascadia Mono, Consolas" Margin="0,2,0,0" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="帧率" FontSize="9" Foreground="{StaticResource FaintBrush}" />
+                                    <TextBlock x:Name="FpsText" Text="—" FontSize="12" FontFamily="Cascadia Mono, Consolas" Margin="0,2,0,0" />
+                                </StackPanel>
+                            </Grid>
+                            <Grid Margin="0,7,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="码率" FontSize="9" Foreground="{StaticResource FaintBrush}" />
+                                    <TextBlock x:Name="BitrateText" Text="—" FontSize="12" FontFamily="Cascadia Mono, Consolas" Margin="0,2,0,0" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="丢帧" FontSize="9" Foreground="{StaticResource FaintBrush}" />
+                                    <TextBlock x:Name="DroppedText" Text="—" FontSize="12" FontFamily="Cascadia Mono, Consolas" Margin="0,2,0,0" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Security note -->
+                    <TextBlock Text="只读通道 · 无鼠标/键盘回传 · 不经过云端"
+                               FontSize="9"
+                               Foreground="#6E9A93"
+                               TextWrapping="Wrap"
+                               HorizontalAlignment="Center"
+                               Margin="0,12,0,0" />
+
+                    <TextBlock Text="MoonView 1.0 · H.264 / UDP"
+                               FontSize="9"
+                               Foreground="#3E5268"
+                               HorizontalAlignment="Center"
+                               Margin="0,6,0,0" />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Viewer -->
+        <Grid Grid.Column="1" Background="{StaticResource BgBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="HeaderRow" Height="54" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border x:Name="ViewerHeader" Grid.Row="0" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="0,0,0,1" Padding="18,0">
+                <Grid>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock x:Name="SessionTitle" Text="等待连接" FontSize="13" FontWeight="SemiBold" />
+                        <TextBlock x:Name="SessionSubtitle" Text="从左侧选择设备，或输入手机屏幕上显示的地址" FontSize="10" Foreground="{StaticResource FaintBrush}" Margin="0,2,0,0" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Button x:Name="FullscreenButton" Content="全屏  F11" Style="{StaticResource GhostButton}" Click="FullscreenButton_Click" Margin="0,0,8,0" />
+                        <Button x:Name="DisconnectButton" Content="断开" Style="{StaticResource GhostButton}" Click="DisconnectButton_Click" IsEnabled="False" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="1" Margin="14" Background="#04070A" BorderBrush="#15212D" BorderThickness="1" CornerRadius="12" ClipToBounds="True">
+                <Grid>
+                    <wv2:WebView2 x:Name="VideoView" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

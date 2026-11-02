@@ -1,0 +1,38 @@
+# Build output
+pc/MoonView/bin/
+pc/MoonView/obj/
+pc/dist/
+android/.gradle/
+android/.kotlin/
+android/build/
+android/app/build/
+*.user
+*.suo
+.vs/
+
+# Local SDK / NuGet caches used during offline builds
+.dotnet/
+.nuget/
+.localappdata/
+.appdata/
+
+# Runtime logs / generated state
+**/MoonShareData/
+**/logs/
+tools/*.log
+tools/*.marker
+tools/*.tmp
+tools/kotlin-*-check.jar
+tools/android-stubs/
+tools/kotlin-stubs/
+tools/screenshot_*.png
+tools/viewer_window.png
+tools/discovery.png
+
+# OS
+.DS_Store
+Thumbs.db
+
+android/local.properties
+apk/
+

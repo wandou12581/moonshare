@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>MoonView</title>
+    <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+    <canvas id="screen"></canvas>
+
+    <div id="idle" class="overlay">
+        <div class="idle-card">
+            <div class="moon-logo">
+                <svg viewBox="0 0 64 64" width="66" height="66" aria-hidden="true">
+                    <circle cx="32" cy="32" r="30" fill="#0B1918" stroke="#2DD4BF" stroke-width="1.2" />
+                    <path d="M39 14c-9.2 2.7-15.8 11.1-15.8 21S29.8 53.3 39 56c-11.3 2.6-22.9-4.4-25.7-15.7C10.5 29 17.5 17.4 28.8 14.6c3.4-.8 6.9-.9 10.2-.6z" fill="#6EE7D1" />
+                    <circle cx="44" cy="24" r="6.4" fill="#58A6FF" />
+                </svg>
+            </div>
+            <h1>等待手机画面</h1>
+            <p id="idleHint">在左侧输入手机屏幕上的配对码，然后点击“连接并观看”。</p>
+            <div class="feature-row">
+                <span>H.264</span>
+                <span>LAN / UDP</span>
+                <span>只读</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="errorPanel" class="overlay hidden">
+        <div class="error-card">
+            <div class="error-mark">!</div>
+            <h2 id="errorTitle">无法解码画面</h2>
+            <p id="errorText"></p>
+            <button id="retryButton" type="button">请求关键帧</button>
+        </div>
+    </div>
+
+    <header id="hud" class="hud">
+        <div class="hud-left">
+            <div class="live-badge"><span id="liveDot"></span><span id="stateLabel">空闲</span></div>
+            <span id="deviceName" class="device-name">MoonView</span>
+            <span class="divider"></span>
+            <span id="resolution" class="mono">—</span>
+            <span id="fps" class="mono">— fps</span>
+            <span id="bitrate" class="mono">— Mbps</span>
+        </div>
+        <div class="hud-right">
+            <span id="audioStatus" class="mono subtle" title="点击启用/恢复声音">音频 —</span>
+            <span id="queue" class="mono subtle">decode 0</span>
+            <span class="readonly-chip">仅观看 · 无控制</span>
+        </div>
+    </header>
+
+    <footer id="footer" class="footer">
+        <span>MoonShare 安全提示：画面只在局域网内传输，不经过云端。</span>
+        <button id="fullscreenButton" type="button">全屏</button>
+    </footer>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="/app.js"></script>
+</body>
+</html>
